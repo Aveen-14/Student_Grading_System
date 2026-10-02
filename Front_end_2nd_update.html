@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grading System</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.btn-danger {
+            background-color: var(--danger);
+        }
+
+        button.btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .result-box {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #f9fafb;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #login-section {
+            max-width: 400px;
+            margin: 80px auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-section" class="card">
+        <h2>Teacher Login</h2>
+        <form id="login-form">
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label for="login-name">Teacher Name</label>
+                <input type="text" id="login-name" required>
+            </div>
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit" style="width: 100%;">Login</button>
+        </form>
+        <div id="login-output" class="result-box hidden"></div>
+    </div>
+
+    <!-- DASHBOARD (Hidden until logged in) -->
+    <div id="dashboard-section" class="hidden">
+        
+        <header>
+            <h1>Grading Dashboard</h1>
+            <div class="user-info">
+                <span>Welcome, <strong id="teacher-display-name"></strong></span>
+                <button id="logout-btn" class="btn-danger" style="margin-top:0;">Logout</button>
+            </div>
+        </header>
+
+        <!-- SEARCH STUDENT GRADES -->
+        <div class="card">
+            <h2>Search Student Grade</h2>
+            <div class="grid-form">
+                <div class="input-group">
+                    <label>Student Name</label>
+                    <input type="text" id="search-grade-name" placeholder="e.g. John Doe">
+                </div>
+            </div>
+            <button onclick="getStudentGrade()">Fetch Grades</button>
+            <div id="search-grade-output" class="result-box hidden"></div>
+        </div>
+
+        <!-- ADD STUDENT -->
+        <div class="card">
+            <h2>Add New Student</h2>
+            <form id="add-student-form" class="grid-form" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="add-name" required>
+                </div>
+                <div class="input-group">
+                    <label>Age</label>
+                    <input type="number" id="add-age" required>
+                </div>
+                <div class="input-group">
+                    <label>Class</label>
+                    <input type="text" id="add-class" required>
+                </div>
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" id="add-subject" required>
+                </div>
+                <div class="input-group">
+                    <label>Marks</label>
+                    <input type="number" id="add-marks" required>
+                </div>
+
+                <button type="button" id="submit-student-btn" class="btn-primary">Add Student</button>
+            </form>
+           
+            <div id="add-student-output" class="result-box hidden"></div>
+        </div>
+
+        <!-- UPDATE GRADES -->
+        <div class="card">
+            <h2>Update Student Grade</h2>
+            <div class="grid-form">
+                <div class="input-group">
+                    <label>Student Name</label>
+                    <input type="text" id="update-name">
+                </div>
+                <div class="input-group">
+                    <label>New Marks</label>
+                    <input type="number" id="update-marks">
+                </div>
+            </div>
+            <button onclick="updateGrades()">Update Marks</button>
+            <div id="update-output" class="result-box hidden"></div>
+        </div>
+
+        <!-- GET TEACHER CLASSES -->
+        <div class="card">
+            <h2>Get Classes by Teacher ID</h2>
+            <div class="grid-form">
+                <div class="input-group">
+                    <label>Teacher ID</label>
+                    <input type="number" id="teacher-id-search">
+                </div>
+            </div>
+            <button onclick="getClasses()">Get Subjects</button>
+            <div id="classes-output" class="result-box hidden"></div>
+        </div>
+
+        <!-- DELETE STUDENT -->
+        <div class="card">
+            <h2>Delete Student</h2>
+            <div class="grid-form">
+                <div class="input-group">
+                    <label>Student ID</label>
+                    <input type="number" id="delete-id">
+                </div>
+            </div>
+            <button class="btn-danger" onclick="deleteStudent()">Delete Student</button>
+            <div id="delete-output" class="result-box hidden"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const API_BASE = "http://127.0.0.1:5555";
+
+    // Utility function to handle outputs
+    function showOutput(elementId, data, isError = false) {
+        const el = document.getElementById(elementId);
+        el.classList.remove("hidden");
+        el.style.borderLeftColor = isError ? "var(--danger)" : "var(--primary)";
+        el.textContent = typeof data === "object" ? JSON.stringify(data, null, 2) : data;
+    }
+
+    // 1. LOGIN
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const Name = document.getElementById("login-name").value;
+        const Password = document.getElementById("login-password").value;
+
+        try {
+            const res = await fetch(`${API_BASE}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ Name, Password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                // Save Teacher ID and Name in localStorage
+                localStorage.setItem("teacher_id", data.teacher.ID);
+                localStorage.setItem("teacher_name", data.teacher.Name);
+
+                document.getElementById("login-section").classList.add("hidden");
+                document.getElementById("dashboard-section").classList.remove("hidden");
+                document.getElementById("teacher-display-name").textContent = data.teacher.Name;
+            } else {
+                showOutput("login-output", data.error, true);
+            }
+        } catch (err) {
+            showOutput("login-output", "Server error / backend unreachable.", true);
+        }
+    });
+
+    // Auto-restore session on page load
+    window.addEventListener("DOMContentLoaded", () => {
+        const teacherId = localStorage.getItem("teacher_id");
+        const teacherName = localStorage.getItem("teacher_name");
+        if (teacherId && teacherName) {
+            document.getElementById("login-section").classList.add("hidden");
+            document.getElementById("dashboard-section").classList.remove("hidden");
+            document.getElementById("teacher-display-name").textContent = teacherName;
+        }
+    });
+
+    // 2. LOGOUT
+    document.getElementById("logout-btn").addEventListener("click", async () => {
+        localStorage.removeItem("teacher_id");
+        localStorage.removeItem("teacher_name");
+        document.getElementById("dashboard-section").classList.add("hidden");
+        document.getElementById("login-section").classList.remove("hidden");
+    });
+
+    // 3. ADD STUDENT
+    async function addStudent() {
+        const name = document.getElementById("add-name").value;
+        const age = parseInt(document.getElementById("add-age").value);
+        const className = document.getElementById("add-class").value;
+        const subject = document.getElementById("add-subject").value;
+        const marks = parseInt(document.getElementById("add-marks").value);
+        const teacherId = localStorage.getItem("teacher_id");
+
+        if (!teacherId) {
+            showOutput("add-student-output", "Missing session. Please log in again.", true);
+            return;
+        }
+
+        if (!name || isNaN(age) || !className || !subject || isNaN(marks)) {
+            showOutput("add-student-output", "Please fill in all fields correctly.", true);
+            return;
+        }
+
+        const payload = {
+            Name: name,
+            Age: age,
+            Class: className,
+            Subject: subject,
+            Marks: marks,
+            Teacher_ID: parseInt(teacherId)
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/addStudent`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            showOutput("add-student-output", data, !res.ok);
+
+            if (res.ok) {
+                document.getElementById("add-student-form").reset();
+            }
+        } catch (err) {
+            showOutput("add-student-output", "Error connecting to server.", true);
+        }
+    }
+
+    // Attach click event to Add Student button
+    document.getElementById("submit-student-btn").addEventListener("click", addStudent);
+
+    // 4. GET STUDENT GRADE
+    async function getStudentGrade() {
+        const name = document.getElementById("search-grade-name").value;
+        if (!name) return;
+
+        const res = await fetch(`${API_BASE}/Student_Grade/${encodeURIComponent(name)}`);
+        const data = await res.json();
+        showOutput("search-grade-output", data, !res.ok);
+    }
+
+    // 5. UPDATE GRADES
+    async function updateGrades() {
+        const name = document.getElementById("update-name").value;
+        const marks = parseInt(document.getElementById("update-marks").value);
+
+        if (!name || isNaN(marks)) return;
+
+        const res = await fetch(`${API_BASE}/updateGrades/${encodeURIComponent(name)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ Name: name, Marks: marks })
+        });
+        const data = await res.json();
+        showOutput("update-output", data, !res.ok);
+    }
+
+    // 6. GET CLASSES
+    async function getClasses() {
+        let teacherId = document.getElementById("teacher-id-search").value || localStorage.getItem("teacher_id");
+        if (!teacherId) {
+            alert("Session missing. Please login again.");
+            return;
+        }
+
+        const res = await fetch(`${API_BASE}/Classes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ Teacher_ID: parseInt(teacherId) })
+        });
+        const data = await res.json();
+        showOutput("classes-output", data, !res.ok);
+    }
+
+    // 7. DELETE STUDENT
+    async function deleteStudent() {
+        const id = parseInt(document.getElementById("delete-id").value);
+        if (isNaN(id)) return;
+
+        const res = await fetch(`${API_BASE}/delete_Student`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ID: id })
+        });
+        const data = await res.json();
+        showOutput("delete-output", data, !res.ok);
+    }
+</script>
+</body>
+</html>
