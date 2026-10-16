@@ -34,7 +34,7 @@ _The comprehensive data hub showcasing active student tracking, search configura
 │  [Update Student Grade]         [Delete Student]         │
 └──────────────────────────────────────────────────────────┘
 ```
-![Grading Dashboard Screen](<img width="1920" height="1080" alt="Screenshot (360)" src="https://github.com/user-attachments/assets/dbe5e1d2-5777-44e5-b917-f3a4b1a5fae3" />
+![Grading Dashboard Screen](<img width="1920" height="1080" alt="Search_ _Add_Student" src="https://github.com/user-attachments/assets/fda73c05-293c-412c-9c15-002f71594860" /><img width="1920" height="1080" alt="Get_classes_ _Delete_Student" src="https://github.com/user-attachments/assets/132873da-acfe-4c6c-82c2-ad44edc38c8c" />
 )
 
 ### ⚙️ 3. Dynamic Roster Operations
