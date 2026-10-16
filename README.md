@@ -21,7 +21,8 @@ _Secure workspace gateway featuring a streamlined Teacher Login module._
 │                        [ Login ]                         │
 └──────────────────────────────────────────────────────────┘
 ```
-![Teacher Login Screen](https://placeholder.com)
+![Teacher Login Screen](<img width="959" height="503" alt="Login_Screen" src="Quality_Images/Login_Screen.png" />
+)
 
 ### 📊 2. Main Grading Dashboard Overview
 _The comprehensive data hub showcasing active student tracking, search configurations, operations metrics, and live rosters._
