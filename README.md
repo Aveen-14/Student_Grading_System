@@ -21,7 +21,7 @@ _Secure workspace gateway featuring a streamlined Teacher Login module._
 │                        [ Login ]                         │
 └──────────────────────────────────────────────────────────┘
 ```
-![Teacher Login Screen](<img width="959" height="503" alt="Login_Screen" src="Quality_Images/Login_Screen.png" />
+![Teacher Login Screen](<img width="959" height="502" alt="Login_Screen" src="https://github.com/user-attachments/assets/53c215bf-4f53-4161-97e0-c926c989cafe" />
 )
 
 ### 📊 2. Main Grading Dashboard Overview
