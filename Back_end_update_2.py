@@ -84,26 +84,52 @@ def logout():
 # API 2
 @app.route('/Student_Grade/<Student_name>', methods=['GET'])
 def get_grades_for_Student(Student_name):
+    # Check if the frontend passed a specific subject query string parameter
+    subject_param = request.args.get('Subject')
+    target_student = Student_name.strip()
+    
     conn = get_db_connection()
     cursor = conn.cursor()
    
-    cursor.execute("""SELECT student.Name, grades.Marks, student.Class, student.Age, student.ID 
-                      FROM student 
-                      INNER JOIN grades ON student.ID = grades.Student_ID 
-                      WHERE Name = ?""", (Student_name,))
-    student_row = cursor.fetchone()
+    if subject_param:
+        # 1. If a subject is specified, find the exact match
+        subject_cleaned = subject_param.strip()
+        cursor.execute("""
+            SELECT student.Name, grades.Marks, student.Class, student.Age, student.ID, grades.Subject
+            FROM student 
+            INNER JOIN grades ON student.ID = grades.Student_ID 
+            WHERE LOWER(student.Name) = LOWER(?) AND LOWER(grades.Subject) = LOWER(?)
+        """, (target_student, subject_cleaned))
+    else:
+        # 2. If no subject is specified, fetch ALL records matching this name
+        cursor.execute("""
+            SELECT student.Name, grades.Marks, student.Class, student.Age, student.ID, grades.Subject
+            FROM student 
+            INNER JOIN grades ON student.ID = grades.Student_ID 
+            WHERE LOWER(student.Name) = LOWER(?)
+        """, (target_student,))
+        
+    db_rows = cursor.fetchall()
     conn.close()
    
-    if student_row:
-        return jsonify({
-            "Name": student_row["Name"], 
-            "Grade": student_row["Marks"], 
-            "Class": student_row["Class"], 
-            "age": student_row["Age"], 
-            "Identification": student_row["ID"]
-        })
+    if db_rows:
+        # Map all matching database rows into a clear JSON array list
+        results_list = []
+        for row in db_rows:
+            results_list.append({
+                "Name": row["Name"], 
+                "Grade": row["Marks"], 
+                "Class": row["Class"], 
+                "age": row["Age"], 
+                "Identification": row["ID"],
+                "Subject": row["Subject"]
+            })
+            
+        # Return the clean list array to the frontend layout
+        return jsonify(results_list), 200
     else:
-        return jsonify({"error": f"No data found for student '{Student_name}'."}), 404
+        search_context = f" taking subject '{subject_param}'" if subject_param else ""
+        return jsonify({"error": f"No data found for student '{target_student}'{search_context}."}), 404
 
 
 # API 3 (PROTECTED BY LOCALSTORAGE PAYLOAD MATCH)
@@ -145,27 +171,44 @@ def add_student():
 
 
 # API 4 (PROTECTED BY LOCALSTORAGE PAYLOAD MATCH)
+# API 4 (PROTECTED BY LOCALSTORAGE PAYLOAD MATCH)
 @app.route('/updateGrades/<Student_name>', methods=['PUT'])
 def update_grades_for_student(Student_name):
     data = request.get_json()
    
-    if not data or 'Name' not in data or 'Marks' not in data:
-        return jsonify({"error": "Invalid data. 'Name' and 'Marks' are required fields."}), 400
+    if not data or 'Name' not in data or 'Marks' not in data or 'Subject' not in data:
+        return jsonify({"error": "Invalid data. 'Name', 'Marks', and 'Subject' are required fields."}), 400
    
     Grade = data['Marks']
- 
+    target_student = Student_name.strip()
+    subject = data['Subject'].strip()
+
     conn = get_db_connection()
     cursor = conn.cursor()
  
-    cursor.execute("UPDATE Grades SET Marks = ? WHERE Student_ID = (SELECT ID FROM Student WHERE Name = ?)", (Grade, Student_name))
+    # FIX: The subquery now checks BOTH Name and Subject together using a JOIN
+    cursor.execute("""
+        UPDATE Grades 
+        SET Marks = ? 
+        WHERE LOWER(Subject) = LOWER(?) 
+          AND Student_ID = (
+              SELECT s.ID 
+              FROM Student s
+              INNER JOIN Grades g ON s.ID = g.Student_ID
+              WHERE LOWER(s.Name) = LOWER(?) AND LOWER(g.Subject) = LOWER(?)
+          )
+    """, (Grade, subject, target_student, subject))
+    
     rows_updated = cursor.rowcount
     conn.commit()
     conn.close()
    
     if rows_updated > 0:
-        return jsonify({"message": f"Updated DATA for '{Student_name}'", "rows_updated": rows_updated}), 200
+        return jsonify({"message": f"Updated {subject} marks for '{target_student}' successfully!", "rows_updated": rows_updated}), 200
     else:
-        return jsonify({"error": f"No data found for Student '{Student_name}'."}), 404
+        return jsonify({
+            "error": f"No grading record found matching Student: '{target_student}' with Subject: '{subject}'."
+        }), 404
 
 
 @app.route('/Classes', methods=['POST'])

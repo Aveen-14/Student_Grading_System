@@ -178,6 +178,10 @@
                     <label>Student Name</label>
                     <input type="text" id="search-grade-name" placeholder="e.g. John Doe">
                 </div>
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" id="search-Subject">
+                </div>
             </div>
             <button onclick="getStudentGrade()">Fetch Grades</button>
             <div id="search-grade-output" class="result-box hidden"></div>
@@ -225,6 +229,10 @@
                 <div class="input-group">
                     <label>New Marks</label>
                     <input type="number" id="update-marks">
+                </div>
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" id="update-Subject">
                 </div>
             </div>
             <button onclick="updateGrades()">Update Marks</button>
@@ -371,25 +379,39 @@
 
     // 4. GET STUDENT GRADE
     async function getStudentGrade() {
-        const name = document.getElementById("search-grade-name").value;
-        if (!name) return;
+    const name = document.getElementById("search-grade-name").value.trim();
+    const subject = document.getElementById("search-Subject").value.trim();
+    const outputBox = document.getElementById("search-grade-output");
 
-        const res = await fetch(`${API_BASE}/Student_Grade/${encodeURIComponent(name)}`);
+    // FIX 1: Correct logical validation to ensure BOTH fields are filled out
+    if (!name || !subject) {
+        showOutput("search-grade-output", { error: "Please provide both Student Name and Subject." }, true);
+        return;
+    }
+
+    try {
+        // FIX 2: Send the Subject as a query parameter to pinpoint the exact record
+        const res = await fetch(`${API_BASE}/Student_Grade/${encodeURIComponent(name)}?Subject=${encodeURIComponent(subject)}`);
         const data = await res.json();
         showOutput("search-grade-output", data, !res.ok);
+    } catch (error) {
+        console.error("Fetch failed:", error);
+        showOutput("search-grade-output", { error: "Failed to connect to backend server." }, true);
     }
+}
 
     // 5. UPDATE GRADES
     async function updateGrades() {
         const name = document.getElementById("update-name").value;
         const marks = parseInt(document.getElementById("update-marks").value);
+        const subject = document.getElementById("update-Subject").value;
 
         if (!name || isNaN(marks)) return;
 
         const res = await fetch(`${API_BASE}/updateGrades/${encodeURIComponent(name)}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ Name: name, Marks: marks })
+            body: JSON.stringify({ Name: name, Marks: marks, Subject: subject })
         });
         const data = await res.json();
         showOutput("update-output", data, !res.ok);
