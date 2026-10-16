@@ -39,7 +39,7 @@ _The comprehensive data hub showcasing active student tracking, search configura
 ### ⚙️ 3. Dynamic Roster Operations
 _The operational layout highlighting form submission interfaces for managing data entry records, student profiles, and grade metrics._
 
-![Student Operations Interface]([https://placeholder.com](https://drive.google.com/file/d/1da36cjoc6EjPobb-rPp3HAg8ylrU5e8V/view?usp=drive_link))
+![Student Operations Interface]([[https://placeholder.com](https://drive.google.com/file/d/1da36cjoc6EjPobb-rPp3HAg8ylrU5e8V/view?usp=sharing)])
 
 ---
 
