@@ -34,7 +34,8 @@ _The comprehensive data hub showcasing active student tracking, search configura
 │  [Update Student Grade]         [Delete Student]         │
 └──────────────────────────────────────────────────────────┘
 ```
-![Grading Dashboard Screen](https://placeholder.com)
+![Grading Dashboard Screen](<img width="1920" height="1080" alt="Screenshot (360)" src="https://github.com/user-attachments/assets/dbe5e1d2-5777-44e5-b917-f3a4b1a5fae3" />
+)
 
 ### ⚙️ 3. Dynamic Roster Operations
 _The operational layout highlighting form submission interfaces for managing data entry records, student profiles, and grade metrics._
